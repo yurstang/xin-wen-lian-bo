@@ -17,6 +17,8 @@ jobs:
           node-version: 16
       - run: npm install
       - run: npm run index
+      # (增强)从刚抓好的当日全文跑量化:词频/人物/主题 -> stats/YYYYMMDD.json
+      - run: node quantify.js
       - run: git config --local user.email "github-actions[bot]@github.com"
       - run: git config --local user.name "github-actions[bot]"
       - run: git add .
