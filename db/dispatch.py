@@ -7,7 +7,10 @@ from seed_map import MAP
 DB = os.path.join(os.path.dirname(__file__), "kw.db")
 NEWS_DIR = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "news"))
 
-def get_first_last(con, date, window=15):
+# 窗口口径(唯一事实源):所有"近N日"判断与展示都用它,避免标签与实现不一致
+WINDOW = 15
+
+def get_first_last(con, date, window=WINDOW):
     # 用纯 python 集合差,避免 SQL 日期边界误判。
     # 今日词集 vs 近 window 天(不含今日)词集:
     #   突现 = 今日有 且 近N天无   (今天新冒头)
@@ -67,15 +70,26 @@ def map_to_assets(word):
             hits.append({"dim": row["dim"], "asset": row["asset"], "dir": row["dir"], "verify": row["verify"]})
     return hits
 
-def days_in_window(con, word, date, window=30):
-    """该词近 window 天(含当日)出现天数 → timeline 强度"""
+def window_dates(con, date, window):
+    """该日期及之前的 window 个已索引日期(倒序)"""
+    return [r[0] for r in con.execute(
+        "SELECT DISTINCT date FROM kw WHERE date<=? ORDER BY date DESC LIMIT ?",
+        (date, window)).fetchall()]
+
+def days_in_window(con, word, date, window=WINDOW):
+    """该词在「近 window 天(含当日)」内出现的天数 → timeline 强度。
+    修复:原实现 WHERE date<=? 无下界,返回的是全历史天数(与函数名/注释不符)。"""
+    ds = window_dates(con, date, window)
+    if not ds:
+        return 0
+    oldest = min(ds)
     n = con.execute(
-        "SELECT COUNT(DISTINCT date) FROM kw WHERE word=? AND date<=?",
-        (word, date)).fetchone()[0]
+        "SELECT COUNT(DISTINCT date) FROM kw WHERE word=? AND date<=? AND date>=?",
+        (word, date, oldest)).fetchone()[0]
     return n
 
-def build_dimension_objects(con, date, first, last, window=30):
-    """聚合:每个资产维度 → 一个主题对象(突现/撤下/近30日强度/点名实体)"""
+def build_dimension_objects(con, date, first, last, segments=None, window=WINDOW):
+    """聚合:每个资产维度 → 一个主题对象(突现/撤下/近WINDOW日强度/点名实体)"""
     # 维度 → { 突现词, 撤下词, 实体 }
     dim = {}
     for w in first:
@@ -92,9 +106,11 @@ def build_dimension_objects(con, date, first, last, window=30):
             b["dropped"].append(w)
             b["assets"] = h["asset"]
             b["dir"] = h["dir"]
-    # 实体:收集该维度相关词的上下文里点名的实体
-    md = open(os.path.join(NEWS_DIR, date + ".md"), encoding="utf-8", errors="ignore").read() if os.path.exists(os.path.join(NEWS_DIR, date + ".md")) else ""
-    segs = news_segments(md)
+    # 实体:收集该维度相关词的上下文里点名的实体(segments 由调用方传入,避免重复读盘)
+    if segments is None:
+        md = open(os.path.join(NEWS_DIR, date + ".md"), encoding="utf-8", errors="ignore").read() if os.path.exists(os.path.join(NEWS_DIR, date + ".md")) else ""
+        segments = news_segments(md)
+    segs = segments
     for key, b in dim.items():
         for w in b["sudden"] + b["dropped"]:
             title, body = find_segment_for_word(segs, w)
@@ -115,9 +131,9 @@ def report(date):
     first, last = get_first_last(con, date)
     md = open(os.path.join(NEWS_DIR, date + ".md"), encoding="utf-8", errors="ignore").read() if os.path.exists(os.path.join(NEWS_DIR, date + ".md")) else ""
     segments = news_segments(md)
-    objs = build_dimension_objects(con, date, first, last)
+    objs = build_dimension_objects(con, date, first, last, segments=segments)
     print(f"===== {date} · 每日联播主题对象(话语→资产) =====")
-    print(f"首现词 {len(first)} · 撤下词 {len(last)} · 聚合维度 {len(objs)}\n")
+    print(f"首现词 {len(first)} · 撤下词 {len(last)} · 聚合维度 {len(objs)} · 窗口 {WINDOW} 日\n")
     # 有动作的维度排前
     for dim, b in sorted(objs.items(), key=lambda kv: -(len(kv[1]['sudden']) + len(kv[1]['dropped']))):
         ent_txt = ("点名: " + "/".join(b["entities"])) if b["entities"] else "(未点名)"
@@ -125,9 +141,9 @@ def report(date):
         print(f"## {dim}  {act}")
         print(f"   点名实体: {ent_txt}")
         if b["sudden"]:
-            print(f"   今日突现(近30日无,今天先说): {', '.join(b['sudden'][:8])}")
+            print(f"   今日突现(近{WINDOW}日无,今天先说): {', '.join(b['sudden'][:8])}")
         if b["dropped"]:
-            print(f"   今日撤下(近30日有,今天停提): {', '.join(b['dropped'][:8])}")
+            print(f"   今日撤下(近{WINDOW}日有,今天停提): {', '.join(b['dropped'][:8])}")
         print()
     con.close()
 

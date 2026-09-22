@@ -1,0 +1,272 @@
+{
+ "date": "20260920",
+ "method_hash": "e88b38704aa357c5",
+ "window": 15,
+ "generated_at": "2026-09-22T13:52:10.419199+00:00",
+ "frozen": true,
+ "n_sudden_total": 399,
+ "n_dropped_total": 7480,
+ "signals": [
+  {
+   "dim": "金融市场",
+   "assets": "黄金",
+   "dir": "避险/通胀",
+   "sudden": [],
+   "dropped": [
+    "大宗商品",
+    "投资者",
+    "煤炭",
+    "美股",
+    "股票",
+    "资本市场",
+    "黄金"
+   ],
+   "entities": [],
+   "n_sudden": 0,
+   "n_dropped": 7
+  },
+  {
+   "dim": "AI",
+   "assets": "模型公司",
+   "dir": "商业化",
+   "sudden": [],
+   "dropped": [
+    "人工智能",
+    "商业化",
+    "大模型",
+    "大语言",
+    "封装",
+    "模型",
+    "芯片"
+   ],
+   "entities": [],
+   "n_sudden": 0,
+   "n_dropped": 7
+  },
+  {
+   "dim": "区域/产业带",
+   "assets": "区域产业",
+   "dir": "政策驱动力",
+   "sudden": [],
+   "dropped": [
+    "京津冀",
+    "大湾区",
+    "粤港澳",
+    "纲要",
+    "长三角",
+    "雄安"
+   ],
+   "entities": [],
+   "n_sudden": 0,
+   "n_dropped": 6
+  },
+  {
+   "dim": "生活物资",
+   "assets": "柴米粮油水电气",
+   "dir": "生活成本",
+   "sudden": [],
+   "dropped": [
+    "储备",
+    "天然气",
+    "气",
+    "粮食",
+    "粮食安全",
+    "食品"
+   ],
+   "entities": [],
+   "n_sudden": 0,
+   "n_dropped": 6
+  },
+  {
+   "dim": "贸易",
+   "assets": "进出口",
+   "dir": "外需",
+   "sudden": [],
+   "dropped": [
+    "关税",
+    "外贸",
+    "跨境电商",
+    "进出口",
+    "进口"
+   ],
+   "entities": [],
+   "n_sudden": 0,
+   "n_dropped": 5
+  },
+  {
+   "dim": "社会经济",
+   "assets": "经济数据",
+   "dir": "民生/通胀",
+   "sudden": [],
+   "dropped": [
+    "CPI",
+    "内需",
+    "消费价格",
+    "物价",
+    "通胀"
+   ],
+   "entities": [],
+   "n_sudden": 0,
+   "n_dropped": 5
+  },
+  {
+   "dim": "能源",
+   "assets": "石油",
+   "dir": "地缘/供给",
+   "sudden": [],
+   "dropped": [
+    "原油",
+    "油价",
+    "油气",
+    "能源安全"
+   ],
+   "entities": [],
+   "n_sudden": 0,
+   "n_dropped": 4
+  },
+  {
+   "dim": "利率",
+   "assets": "利率",
+   "dir": "流动性",
+   "sudden": [],
+   "dropped": [
+    "利率",
+    "宽松",
+    "流动性",
+    "货币政策"
+   ],
+   "entities": [],
+   "n_sudden": 0,
+   "n_dropped": 4
+  },
+  {
+   "dim": "汇率",
+   "assets": "汇率",
+   "dir": "利率+贸易+地缘联动",
+   "sudden": [],
+   "dropped": [
+    "外汇",
+    "汇率",
+    "贬值"
+   ],
+   "entities": [],
+   "n_sudden": 0,
+   "n_dropped": 3
+  },
+  {
+   "dim": "医药",
+   "assets": "创新药",
+   "dir": "管线价值",
+   "sudden": [],
+   "dropped": [
+    "临床",
+    "创新药",
+    "医药"
+   ],
+   "entities": [],
+   "n_sudden": 0,
+   "n_dropped": 3
+  },
+  {
+   "dim": "科技",
+   "assets": "科技/先进制造",
+   "dir": "政策扶植",
+   "sudden": [],
+   "dropped": [
+    "新质生产力",
+    "科创"
+   ],
+   "entities": [],
+   "n_sudden": 0,
+   "n_dropped": 2
+  },
+  {
+   "dim": "稀土",
+   "assets": "稀土",
+   "dir": "供给收缩",
+   "sudden": [],
+   "dropped": [
+    "稀土",
+    "配额"
+   ],
+   "entities": [],
+   "n_sudden": 0,
+   "n_dropped": 2
+  }
+ ],
+ "negative_control": [
+  {
+   "word": "获悉",
+   "dim": "区域/产业带",
+   "assets": "区域产业",
+   "dir": "control"
+  },
+  {
+   "word": "跟着",
+   "dim": "金融市场",
+   "assets": "A/港/美",
+   "dir": "control"
+  },
+  {
+   "word": "驻港",
+   "dim": "汇率",
+   "assets": "汇率",
+   "dir": "control"
+  },
+  {
+   "word": "央视网",
+   "dim": "稀土",
+   "assets": "稀土",
+   "dir": "control"
+  },
+  {
+   "word": "价格",
+   "dim": "科技",
+   "assets": "科技/先进制造",
+   "dir": "control"
+  },
+  {
+   "word": "正给",
+   "dim": "社会经济",
+   "assets": "经济数据",
+   "dir": "control"
+  },
+  {
+   "word": "日称",
+   "dim": "利率",
+   "assets": "利率",
+   "dir": "control"
+  },
+  {
+   "word": "得到",
+   "dim": "利率",
+   "assets": "利率",
+   "dir": "control"
+  },
+  {
+   "word": "命运",
+   "dim": "医药",
+   "assets": "创新药",
+   "dir": "control"
+  },
+  {
+   "word": "李希",
+   "dim": "汇率",
+   "assets": "汇率",
+   "dir": "control"
+  },
+  {
+   "word": "忠诚",
+   "dim": "社会经济",
+   "assets": "经济数据",
+   "dir": "control"
+  },
+  {
+   "word": "300",
+   "dim": "区域/产业带",
+   "assets": "区域产业",
+   "dir": "control"
+  }
+ ],
+ "note": "只增不改。method_hash 锁定当时方法;输入 news/*.md 本身 append-only。"
+}

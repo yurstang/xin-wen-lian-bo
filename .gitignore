@@ -4,3 +4,6 @@ serve.json
 __pycache__/
 *.pyc
 db/*.db
+
+# 样本内回测(用今天的词表重算历史,含 look-ahead bias,不得作为证据/进入仓库)
+history_briefs.json

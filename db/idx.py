@@ -23,17 +23,24 @@ STOP = set("""的 了 在 是 和 与 及 或 被 把 将 为 从 以 于 对 �
 新闻联播 节目 本期节目主要内容 查看原文 查看 原文 新闻摘要 详细新闻 更新时间戳 央视网消息 国内联播快讯 国际联播快讯
 同比 增长 今年 目前 此外 近日 日上午 日下午""".split())
 
+# 种子词集合:来自 seed_map 的词永远索引,不受"单字/必须含汉字"过滤影响
+# (修复:HBM/CPI/LPR/AI/PCB/ARR/FDA/GPU 与 米/油/水/电/气/菜/铜 曾被过滤掉 → 维度静默失明)
+SEED_WORDS = {w for row in MAP for w in row["words"]}
+
 def words_of(text):
-    # 用 jieba 切词(非滑窗),过滤停用词、纯标点、单字
+    # 用 jieba 切词。保留条件(任一即可):
+    #   a) 是种子词(永远保留)      b) ASCII/数字词(如 AI/HBM/2026)      c) 含汉字且长度>=2
     out = []
     for w in jieba.cut(text):
-        if len(w) < 2:
+        w = w.strip()
+        if not w or w in STOP:
             continue
-        if w in STOP:
-            continue
-        if not re.search(r"[一-龥]", w):
-            continue
-        out.append(w)
+        if w in SEED_WORDS:
+            out.append(w); continue
+        if re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9\.\-]*", w):
+            out.append(w); continue
+        if len(w) >= 2 and re.search(r"[一-龥]", w):
+            out.append(w); continue
     return out
 
 def build(db, force=False):
